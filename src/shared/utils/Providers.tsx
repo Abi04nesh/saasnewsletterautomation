@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import DashboardSidebar from "@/shared/widgets/dashboard/sidebar/dashboard.sidebar";
 import { Toaster } from "react-hot-toast";
 import { addStripe } from "@/actions/add.stripe";
+import { useEffect } from "react";
 
 interface ProviderProps {
   children: React.ReactNode;
@@ -12,19 +13,16 @@ interface ProviderProps {
 
 export default function Providers({ children }: ProviderProps) {
   const pathname = usePathname();
-
   const { isLoaded, user } = useUser();
 
-  const isStripeCustomerIdHas = async () => {
-    await addStripe();
-  };
+  useEffect(() => {
+    if (user) {
+      addStripe(); // ✅ Runs 
+    }
+  }, [user]); // Runs when `user` changes
 
   if (!isLoaded) {
     return null;
-  } else {
-    if (user) {
-      isStripeCustomerIdHas();
-    }
   }
 
   return (

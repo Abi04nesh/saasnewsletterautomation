@@ -1,7 +1,7 @@
 "use server";
 
 import Email from "@/models/email.model";
-import { connectDb } from "@/shared/libs/db";
+import  connectDb  from "@/shared/libs/db";
 
 export const deleteEmail = async ({ emailId }: { emailId: string }) => {
   try {

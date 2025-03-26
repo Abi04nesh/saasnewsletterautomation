@@ -1,32 +1,44 @@
-import mongoose from "mongoose";
-import { driver, createAstraUri } from "stargate-mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
-export const connectDb = async () => {
-  try {
-    const uri = createAstraUri(
-      process.env.ASTRA_DB_API_ENDPOINT!,
-      process.env.ASTRA_DB_APPLICATION_TOKEN!
-    );
 
-    // Check if there's an existing connection
-    if (mongoose.connection.readyState !== 0) {
-      // Disconnect the existing connection
-      await mongoose.disconnect();
-    }
-    mongoose.set("autoCreate", true);
-    mongoose.setDriver(driver);
+declare global {
+  var mongooseGlobal: {
+    conn: Mongoose | null;
+    promise: Promise<Mongoose> | null;
+  };
+}
 
-    await mongoose
-      .connect(uri, {
-        isAstra: true,
-      })
-      .then((res) => {
-        console.log("connected");
-      })
-      .catch((r) => {
-        console.log(r);
-      });
-  } catch (error) {
-    console.log(error);
+// ✅ Ensure global caching for Next.js hot reloading
+global.mongooseGlobal = global.mongooseGlobal || { conn: null, promise: null };
+
+const MONGODB_URI = process.env.MONGODB_URI as string;
+
+if (!MONGODB_URI) {
+  throw new Error("❌ Please define the MONGODB_URI environment variable in .env");
+}
+
+async function connectDb(): Promise<Mongoose> {
+  if (global.mongooseGlobal.conn) {
+    return global.mongooseGlobal.conn;
   }
-};
+
+  if (!global.mongooseGlobal.promise) {
+    global.mongooseGlobal.promise = (async () => {
+      try {
+        const conn = await mongoose.connect(MONGODB_URI, {
+          bufferCommands: false,
+        });
+        console.log("✅ Connected to MongoDB");
+        return conn;
+      } catch (error) {
+        console.error("❌ MongoDB Connection Error:", error);
+        throw error;
+      }
+    })();
+  }
+
+  global.mongooseGlobal.conn = await global.mongooseGlobal.promise;
+  return global.mongooseGlobal.conn;
+}
+
+export default connectDb;

@@ -1,5 +1,5 @@
 "use server";
-import { connectDb } from "@/shared/libs/db";
+import  connectDb  from "@/shared/libs/db";
 import Stripe from "stripe";
 
 export const manageSubscription = async ({

@@ -1,9 +1,9 @@
 "use server";
 
 import Subscriber from "@/models/subscriber.model";
-import { connectDb } from "@/shared/libs/db";
-import { validateEmail } from "@/shared/utils/ZeroBounceApi";
-import { clerkClient } from "@clerk/nextjs";
+import connectDb from "@/shared/libs/db";
+import { clerkClient } from "@clerk/clerk-sdk-node";
+import type { User } from "@clerk/clerk-sdk-node";
 
 export const subscribe = async ({
   email,
@@ -15,42 +15,45 @@ export const subscribe = async ({
   try {
     await connectDb();
 
-    // first we need to fetch all users
-    const allUsers = await clerkClient.users.getUserList();
+    // Fetch all users using Clerk API
+    const allUsersResponse = await clerkClient.users.getUserList();
+    const allUsers: User[] = allUsersResponse?.data ?? []; // Ensure it's an array
 
-    // now we need to find our newsletter owner
-    const newsletterOwner = allUsers.find((i) => i.username === username);
+    // Find the newsletter owner
+    const newsletterOwner = allUsers.find((user) => user.username === username);
 
     if (!newsletterOwner) {
-      throw Error("Username is not vaild!");
+      return { error: "Username is not valid!" };
     }
 
-    // check if subscribers already exists
+    // Check if subscriber already exists
     const isSubscriberExist = await Subscriber.findOne({
       email,
-      newsLetterOwnerId: newsletterOwner?.id,
-    });
+      newsLetterOwnerId: newsletterOwner.id,
+    }).lean(); // ✅ Ensure we get a plain object
 
     if (isSubscriberExist) {
       return { error: "Email already exists!" };
     }
 
-    // Validate email
-    const validationResponse = await validateEmail({ email });
-    if (validationResponse.status === "invalid") {
-      return { error: "Email not valid!" };
-    }
-
     // Create new subscriber
     const subscriber = await Subscriber.create({
       email,
-      newsLetterOwnerId: newsletterOwner?.id,
-      source: "By Becodemy website",
+      newsLetterOwnerId: newsletterOwner.id,
       status: "Subscribed",
     });
-    return subscriber;
+
+    // ✅ Convert Mongoose document to a plain object
+    const plainSubscriber = {
+      ...subscriber.toObject(),
+      _id: subscriber._id.toString(), // Convert ObjectId to string
+      createdAt: subscriber.createdAt.toISOString(), // Convert Date to string
+      updatedAt: subscriber.updatedAt.toISOString(), // Convert Date to string
+    };
+
+    return plainSubscriber;
   } catch (error) {
-    console.error(error);
+    console.error("Subscription error:", error);
     return { error: "An error occurred while subscribing." };
   }
 };

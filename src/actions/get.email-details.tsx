@@ -1,6 +1,6 @@
 "use server";
 
-import { connectDb } from "@/shared/libs/db";
+import  connectDb  from "@/shared/libs/db";
 import Email from "@/models/email.model";
 
 export const GetEmailDetails = async ({
