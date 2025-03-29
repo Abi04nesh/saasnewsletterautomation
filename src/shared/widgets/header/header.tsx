@@ -1,24 +1,25 @@
-import Link from 'next/link'
-import Logo from './logo'
-import NavItems from './nav.items'
-import Toolbar from './toolbar'
+"use client";
+
+import Toolbar from "./toolbar";
+import Image from "next/image";
+import Link from "next/link";
+import Logo from "./logo";
 
 const Header = () => {
   return (
-   <header className='w-full sticky top-0 left-0 z-[999] border-b border-b[#000] px-10 flex items-center justify-between h-[80px] bg-white text-black'>
-      <div>
-        <Link href={"/"}>
+    <header className="flex justify-between items-center p-4 bg-white shadow-md">
+      {/* Left: Logo & Branding */}
+      <div className="flex items-center gap-2">
+        <Link href="/">
           <Logo />
         </Link>
+        <span className="text-l font-bold">NETZWERK</span>
       </div>
-      <div>
-            <NavItems />
-        </div>
-        <div className='flex items-center gap-3'>
-          <Toolbar />
-        </div>
-   </header>
-  )
-}
 
-export default Header
+      {/* Right: Toolbar */}
+      <Toolbar />
+    </header>
+  );
+};
+
+export default Header;
