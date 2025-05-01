@@ -83,31 +83,52 @@ const Emaileditor = ({ subjectTitle }) => {
   };
 
   return (
-    <>
+    <div className="h-screen flex flex-col">
       {!loading && (
-        <div className="w-full h-[90vh] relative">
-          <EmailEditor
-            minHeight={"80vh"}
-            ref={emailEditorRef}
-            onReady={onReady}
-          />
-          <div className="absolute bottom-0 flex items-center justify-end gap-4 right-0 w-full border-t p-3">
-            <Button
-              className="bg-transparent cursor-pointer flex items-center gap-1 text-black border border-[#00000048] text-lg rounded-lg"
-              onClick={saveDraft}
-            >
-              <span className="opacity-[.7]">Save Draft</span>
-            </Button>
-            <Button
-              className="bg-[#000] text-white cursor-pointer flex items-center gap-1 border text-lg rounded-lg"
-              onClick={exportHtml}
-            >
-              <span>Send</span>
-            </Button>
+        <>
+          {/* Editor Header */}
+          <div className="border-b bg-white px-6 py-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-medium text-gray-800">{subjectTitle}</h2>
+              <p className="text-sm text-gray-500">Draft • Last edited just now</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                size="lg"
+                className="bg-white hover:bg-gray-50 text-gray-700 border-2 px-6 rounded-lg transition-colors"
+                onClick={saveDraft}
+              >
+                Save Draft
+              </Button>
+              <Button
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-lg transition-colors"
+                onClick={exportHtml}
+              >
+                Send Email
+              </Button>
+            </div>
           </div>
-        </div>
+
+          {/* Editor Workspace */}
+          <div className="flex-1 bg-gray-50">
+            <div className="h-full max-w-[1200px] mx-auto bg-white">
+              <EmailEditor
+                minHeight="calc(100vh - 85px)"
+                ref={emailEditorRef}
+                onReady={onReady}
+                options={{
+                  customCSS: [
+                    `.blockbuilder-preferences-sidebar { min-width: 360px !important; }`,
+                    `.template-list { max-width: none !important; }`,
+                  ],
+                }}
+              />
+            </div>
+          </div>
+        </>
       )}
-    </>
+    </div>
   );
 };
 

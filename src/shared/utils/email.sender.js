@@ -33,9 +33,14 @@ export const sendEmail = async ({ userEmail, subject, content }) => {
       html: content,
     });
 
-    return response;
+    // Return only serializable data
+    return {
+      messageId: response.messageId,
+      accepted: response.accepted,
+      rejected: response.rejected
+    };
   } catch (error) {
-    console.log(error);
-    throw error;
+    console.error('Email sending failed:', error);
+    throw new Error('Failed to send email: ' + (error.message || 'Unknown error'));
   }
 };

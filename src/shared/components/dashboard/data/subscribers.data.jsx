@@ -66,10 +66,13 @@ const SubscribersData = () => {
   };
 
   return (
-    <div className="h-full px-5 pb-5">
+    <div className="h-full">
       <Box 
-        className="h-full w-full relative"
-        sx={gridStyles}
+        className="h-full w-full relative rounded-lg overflow-hidden"
+        sx={{
+          ...gridStyles,
+          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+        }}
       >
         <DataGrid
           rows={rows}
@@ -77,9 +80,18 @@ const SubscribersData = () => {
           checkboxSelection
           disableRowSelectionOnClick
           loading={loading}
-          className="shadow-sm"
+          className="shadow-none"
           sx={{
-            height: "100%"
+            height: "100%",
+            border: "none",
+            '& .MuiDataGrid-columnHeader': {
+              padding: '16px',
+              fontSize: '0.95rem'
+            },
+            '& .MuiDataGrid-cell': {
+              padding: '16px',
+              fontSize: '0.9rem'
+            }
           }}
           pageSizeOptions={[10, 25, 50]}
           initialState={{

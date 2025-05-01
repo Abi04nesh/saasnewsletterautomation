@@ -40,7 +40,7 @@ const MainLayout = ({ children }) => {
           <Sidebar />
         </div>
       )}
-      <main className={`flex-1 min-h-screen ${shouldShowSidebar ? 'ml-64' : ''}`}>
+      <main className={`flex-1 min-h-screen ${shouldShowSidebar ? 'ml-72' : ''}`}>
         {children}
       </main>
     </div>

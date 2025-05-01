@@ -48,69 +48,92 @@ const Write = () => {
   };
 
   return (
-    <div className="w-full flex p-5 flex-wrap gap-6 relative">
-      <div
-        className="w-[200px] h-[200px] bg-slate-50 flex flex-col items-center justify-center rounded border cursor-pointer"
-        onClick={() => setOpen(!open)}
-      >
-        <span className="text-2xl block text-center mb-3">{ICONS.plus}</span>
-        <h5 className="text-2xl">Create New</h5>
-      </div>
+    <div className="max-w-[1920px] mx-auto p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+        {/* Create New Card */}
+        <div
+          className="bg-white rounded-xl border-2 border-dashed border-gray-300 hover:border-gray-400 cursor-pointer transition-all p-6 aspect-[4/3] flex flex-col items-center justify-center group"
+          onClick={() => setOpen(!open)}
+        >
+          <div className="transform transition-transform group-hover:scale-110">
+            <span className="text-3xl block text-center mb-4 text-gray-600">{ICONS.plus}</span>
+            <h5 className="text-2xl font-medium text-gray-800">Create New</h5>
+          </div>
+        </div>
 
-      {/* saved emails */}
-      {emails &&
-        emails.map((i) => {
-          const formattedTitle = i?.title
-            ?.replace(/\s+/g, "-")
-            .replace(/&/g, "-");
+        {/* Saved Emails */}
+        {emails?.map((i) => {
+          const formattedTitle = i?.title?.replace(/\s+/g, "-").replace(/&/g, "-");
           return (
             <div
               key={i?._id}
-              className="w-[200px] h-[200px] z-[0] relative bg-slate-50 flex flex-col items-center justify-center rounded border cursor-pointer"
+              className="bg-white rounded-xl border hover:border-gray-300 group transition-all p-6 aspect-[4/3] relative flex flex-col"
             >
-              <span
-                className="absolute block z-20 right-2 top-2 text-2xl cursor-pointer"
-                onClick={() => deleteHanlder(i?._id)}
-              >
-                {ICONS.delete}
-              </span>
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="font-medium text-xl text-gray-800 line-clamp-2">{i.title}</h3>
+                <button
+                  onClick={() => deleteHanlder(i?._id)}
+                  className="text-gray-400 hover:text-red-500 transition-colors p-1 opacity-0 group-hover:opacity-100"
+                >
+                  {ICONS.delete}
+                </button>
+              </div>
+              
               <Link
                 href={`/dashboard/new-email?subject=${formattedTitle}`}
-                className="text-xl"
+                className="mt-auto flex items-center text-blue-600 hover:text-blue-700 transition-colors"
               >
-                {i.title}
+                <span>Open</span>
+                <span className="ml-2">{ICONS.rightArrow}</span>
               </Link>
             </div>
           );
         })}
+      </div>
 
+      {/* Create New Modal */}
       {open && (
-        <div className="absolute flex items-center justify-center top-0 left-0 bg-[#00000028] h-screen w-full">
-          <div className="w-[600px] p-5 bg-white rounded shadow relative">
-            <div className="absolute top-3 right-3">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => setOpen(!open)}
-              >
-                {ICONS.cross}
-              </span>
-            </div>
-            <h5 className="text-2xl">Enter your Email subject</h5>
-            <input
-              type="text"
-              name=""
-              id=""
-              className="border w-full my-2 h-[35px] px-2 outline-none"
-              value={emailTitle}
-              onChange={(e) => setEmailTitle(e.target.value)}
-            />
-            <Button
-              color="primary"
-              className="rounded text-xl mt-3"
-              onClick={handleCreate}
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="w-full max-w-2xl mx-auto p-8 bg-white rounded-xl shadow-xl relative">
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
-              Continue
-            </Button>
+              {ICONS.cross}
+            </button>
+            
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-800">Create New Email</h2>
+                <p className="text-gray-600 mt-1">Enter a subject for your email campaign</p>
+              </div>
+
+              <input
+                type="text"
+                name="email-subject"
+                id="email-subject"
+                placeholder="Enter email subject..."
+                className="w-full h-12 px-4 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                value={emailTitle}
+                onChange={(e) => setEmailTitle(e.target.value)}
+              />
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  className="bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors px-6 py-2 rounded-lg"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  className="bg-black text-white hover:bg-gray-900 transition-colors px-6 py-2 rounded-lg"
+                  onClick={handleCreate}
+                >
+                  Create Email
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
