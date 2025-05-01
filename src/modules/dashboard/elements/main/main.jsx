@@ -1,29 +1,48 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-
-import DashboardOverViewCard from "@/shared/components/cards/overview.card";
-import SubscribersChart from "@/shared/components/charts/subscribers.chart";
 import { Button } from "@nextui-org/react";
 import { ICONS } from "@/shared/utils/icons";
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { initializeStripe } from "@/shared/utils/payment.utils";
+import { useEffect } from "react";
+
+// Dynamically import heavy components
+const DashboardOverViewCard = lazy(() => import("@/shared/components/cards/overview.card"));
+const SubscribersChart = lazy(() => import("@/shared/components/charts/subscribers.chart"));
+
+// Loading placeholders
+const CardPlaceholder = () => (
+  <div className="w-full h-[200px] bg-gray-100 rounded-lg animate-pulse" />
+);
+
+const ChartPlaceholder = () => (
+  <div className="w-full h-[400px] bg-gray-100 rounded-lg animate-pulse" />
+);
 
 const Main = () => {
   const { user } = useUser();
   const [copied, setCopied] = useState(false);
 
-  const handleCopyClick = () => {
+  // Initialize Stripe only once when user is available
+  useEffect(() => {
+    if (user) {
+      initializeStripe(user);
+    }
+  }, [user]);
+
+  const handleCopyClick = async () => {
     const smallText = document.querySelector(".copy-text");
     if (smallText) {
-      const textToCopy = smallText.innerText;
-      navigator.clipboard.writeText(textToCopy).then(() => {
+      try {
+        await navigator.clipboard.writeText(smallText.innerText);
         setCopied(true);
         toast.success("Copied");
-        setTimeout(() => {
-          setCopied(false);
-        }, 2000);
-      });
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        toast.error("Failed to copy");
+      }
     }
   };
   
@@ -43,9 +62,13 @@ const Main = () => {
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8 min-h-[85vh]">
             <br />
-            <DashboardOverViewCard />
+            <Suspense fallback={<CardPlaceholder />}>
+              <DashboardOverViewCard />
+            </Suspense>
             <br />
-            <SubscribersChart />
+            <Suspense fallback={<ChartPlaceholder />}>
+              <SubscribersChart />
+            </Suspense>
           </div>
           
           <div className="lg:col-span-4 space-y-6">

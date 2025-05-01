@@ -1,6 +1,7 @@
-export async function generateAnalyticsData(model) {
+export async function generateAnalyticsData(model, filters = {}) {
   const last7Months = [];
   const currentDate = new Date();
+  let totalCount = 0;
 
   for (let i = 6; i >= 0; i--) {
     // Calculate the start and end dates based on months
@@ -13,16 +14,24 @@ export async function generateAnalyticsData(model) {
       year: "numeric",
     });
 
-    // Count documents within the date range
-    const count = await model.countDocuments({
+    // Combine date range with other filters
+    const query = {
+      ...filters,
       createdAt: {
         $gte: startDate,
         $lt: endDate,
       },
-    });
+    };
+
+    // Count documents within the date range and with filters
+    const count = await model.countDocuments(query);
+    totalCount += count;
 
     last7Months.push({ month: monthYear, count });
   }
 
-  return { last7Months };
+  return { 
+    last7Months,
+    totalCount
+  };
 }
