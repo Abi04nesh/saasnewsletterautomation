@@ -2,7 +2,7 @@
 
 import Subscriber from "@/models/subscriber.model";
 import { generateAnalyticsData } from "@/shared/utils/analytics.generator";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 
 export const subscribersAnalytics = async () => {
   try {
