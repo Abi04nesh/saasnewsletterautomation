@@ -26,6 +26,7 @@ const nextConfig = {
     optimizePackageImports: ['@mui/material', '@nextui-org/react', 'recharts'],
     optimizeServerReact: true,
     scrollRestoration: true,
+    runtime: 'experimental-edge',
   },
 
   // Optimize loading of third-party scripts
