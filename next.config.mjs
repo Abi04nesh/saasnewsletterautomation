@@ -3,9 +3,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'https',
         hostname: "media.beehiiv.com",
       },
       {
+        protocol: 'https',
         hostname: "img.clerk.com",
       },
     ],
@@ -19,10 +21,7 @@ const nextConfig = {
   // Enable static optimization and code splitting
   experimental: {
     optimizeCss: true,    // Enables CSS optimization
-    serverActions: {
-      allowedOrigins: ['localhost:3000'],
-      bodySizeLimit: '2mb'
-    },
+    serverActions: true,   // Enable server actions with default configuration
     optimizePackageImports: ['@mui/material', '@nextui-org/react', 'recharts'],
     optimizeServerReact: true,
     scrollRestoration: true

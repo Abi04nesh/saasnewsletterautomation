@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: newsletter-platform
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Authentication
+      - key: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+        value: pk_test_aW5mb3JtZWQtcmluZ3RhaWwtODYuY2xlcmsuYWNjb3VudHMuZGV2JA
+      - key: CLERK_SECRET_KEY
+        value: sk_test_exrk9THLkjd2g3HogHOBJnM4tWE6QYTZffXbgwakdX
+      # AWS SES Configuration
+      - key: AWS_ACCESS_KEY
+        value: AKIA6ODUZYTQRRDJUISC
+      - key: AWS_SECRET_KEY
+        value: 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
+      # Stripe Configuration
+      - key: STRIPE_PUBLISHABLE_KEY
+        value: pk_test_51QxUimR4Q7rsuetP4XUdO9tgjDqCkFGZ5G2KiU5cquPEBxWQc1R5z1mregWxFhI38G9lz17aODUAYuz6oV3CTHG000DjA7nznV
+      - key: STRIPE_SECRET_KEY
+        value: sk_test_51QxUimR4Q7rsuetPYJQtW6TwH9rTZRP0n1Vdz68zMbSJ5rDnqe7NoAvdfu9Zc7mUL0Lk3ZRuhD9V5zSJrtQ2kcML00Go7Hz3DG
+      - key: STRIPE_WEBHOOK_SECRET
+        value: whsec_c40a028d9b06210ec31a9a7d5b4f848d2082f622d25d6f6b81fd5a7f9f0ea9e6
+      # Application Configuration
+      - key: NEXT_PUBLIC_WEBSITE_URL
+        value: ${RENDER_EXTERNAL_URL}
+      - key: JWT_SECRET_KEY
+        value: 8367255e8e6e15522ddf8db4c758f93d6e1d16f77564d72d1149604ac60132b2
+      - key: MONGODB_URI
+        value: mongodb+srv://abineshcloudmfedu:abinesH123@cluster0.qrf9y.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - key: ZEROBOUNCE_API_KEY
+        value: 0af75da2565646788b0ee0aca72b7ba7
+    healthCheckPath: /
+    autoDeploy: true
