@@ -9,35 +9,43 @@ services:
         value: production
       # Authentication
       - key: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-        value: your_clerk_publishable_key
+        value: pk_test_placeholder_clerk_publishable_key
       - key: CLERK_SECRET_KEY
-        value: your_clerk_secret_key
+        value: sk_test_placeholder_clerk_secret_key
       # AWS SES Configuration
       - key: AWS_ACCESS_KEY
-        value: your_aws_access_key
+        value: AKIA_PLACEHOLDER_KEY_ID
       - key: AWS_SECRET_KEY
-        value: your_aws_secret_key
-      # Stripe Configuration
+        value: PLACEHOLDER_AWS_SECRET_ACCESS_KEY_VALUE
+      # Stripe Configuration  
       - key: STRIPE_PUBLISHABLE_KEY
-        value: your_stripe_publishable_key
+        value: pk_test_placeholder_stripe_key
       - key: STRIPE_SECRET_KEY
-        value: your_stripe_secret_key
+        value: sk_test_placeholder_stripe_key
       - key: STRIPE_WEBHOOK_SECRET
-        value: your_stripe_webhook_secret
-      # Application Configuration
+        value: whsec_placeholder_webhook_secret
+      # Application Configuration  
       - key: NEXT_PUBLIC_WEBSITE_URL
         value: ${RENDER_EXTERNAL_URL}
       - key: JWT_SECRET_KEY
-        value: your_jwt_secret_key
+        value: replace_with_64_character_random_string
       - key: MONGODB_URI
-        value: your_mongodb_uri
+        value: mongodb+srv://placeholder:password@cluster.mongodb.net/database
       - key: ZEROBOUNCE_API_KEY
-        value: your_zerobounce_api_key
+        value: placeholder_zerobounce_api_key
     healthCheckPath: /
     autoDeploy: true
 
-# Instructions:
-# 1. Copy this file to render.yaml
-# 2. Replace all placeholder values (your_*) with actual secrets
-# 3. Set these values in Render's environment variables dashboard instead of this file
-# 4. Keep render.yaml in .gitignore to prevent committing secrets
+# ⚠️ SECURITY NOTICE ⚠️
+# 1. NEVER commit real credentials in this file
+# 2. Setup process:
+#    a. Copy this file to render.yaml (ensure render.yaml is in .gitignore)
+#    b. Go to Render Dashboard -> Environment Variables
+#    c. Add each secret using Render's secure environment variables
+#    d. NEVER paste real credentials into render.yaml
+# 3. Security best practices:
+#    - Generate new production credentials for deployment
+#    - Rotate secrets periodically
+#    - Use least-privilege access for all credentials
+#    - Enable audit logging where available
+#    - Monitor for unauthorized access attempts
