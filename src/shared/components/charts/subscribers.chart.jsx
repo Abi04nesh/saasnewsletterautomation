@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import {
   LineChart,
   Line,
@@ -10,6 +10,13 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useSubscribersCache } from "@/shared/hooks/useSubscribersCache";
+
+const NoDataState = () => (
+  <div className="h-[85%] w-full flex flex-col items-center justify-center">
+    <p className="text-gray-600">No subscriber data available</p>
+    <p className="mt-2 text-sm text-gray-500">Data will appear here once you have subscribers</p>
+  </div>
+);
 
 const LoadingState = () => (
   <div className="h-[85%] w-full flex flex-col items-center justify-center">
@@ -31,11 +38,16 @@ const ErrorState = ({ error, onRetry }) => (
 );
 
 const SubscribersChart = () => {
-  const { data: analyticsData, loading, error, fetchData, refreshData } = useSubscribersCache();
-  const data = analyticsData?.last7Months || [];
-  const totalCount = analyticsData?.totalCount || 0;
+  const { data, loading, error, fetchData, refreshData } = useSubscribersCache();
+  const totalCount = data?.reduce((sum, item) => sum + item.count, 0) || 0;
+
+  const onRefresh = useCallback(async () => {
+    console.log('Refreshing chart data...');
+    await refreshData();
+  }, [refreshData]);
 
   useEffect(() => {
+    console.log('Chart data:', data);
     fetchData();
   }, [fetchData]);
 
@@ -47,7 +59,7 @@ const SubscribersChart = () => {
           <p className="text-2xl font-semibold mt-1">{totalCount}</p>
         </div>
         <button
-          onClick={() => refreshData()}
+          onClick={onRefresh}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           title="Refresh data"
         >
@@ -67,31 +79,33 @@ const SubscribersChart = () => {
       {loading ? (
         <LoadingState />
       ) : error ? (
-        <ErrorState error={error} onRetry={() => refreshData()} />
+        <ErrorState error={error} onRetry={onRefresh} />
+      ) : !data?.length ? (
+        <NoDataState />
       ) : (
-        <ResponsiveContainer width="100%" height="85%" className="mt-5">
-          <LineChart
-            width={500}
-            height={200}
-            data={data}
-            syncId="anyId"
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="count"
-              stroke="#EB4898"
-              fill="#EB4898"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      )}
-    </div>
-  );
+        <ResponsiveContainer width="100%" height="85%" className="mt-5">
+          <LineChart
+            width={500}
+            height={200}
+            data={data}
+            syncId="anyId"
+            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="count"
+              stroke="#EB4898"
+              fill="#EB4898"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
 };
 
 export default SubscribersChart;

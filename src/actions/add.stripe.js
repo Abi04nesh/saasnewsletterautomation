@@ -2,13 +2,13 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import Membership from "@/models/membership.model";
-import connectDb from "@/shared/libs/db"; // ✅ Default import
+import connectDb from "@/shared/libs/db"; 
 
 export const addStripe = async () => {
   try {
     await connectDb();
 
-    const user = await currentUser(); // ✅ Correct function usage
+    const user = await currentUser(); 
     if (!user) throw new Error("User not found!");
 
     const membership = await Membership.findOne({ userId: user.id }).lean();

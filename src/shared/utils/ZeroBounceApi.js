@@ -5,7 +5,7 @@ export const validateEmail = async ({ email }) => {
 
  try {
    const response = await fetch(uri, { method: "GET" });
-    if (!response.ok) {
+   if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();

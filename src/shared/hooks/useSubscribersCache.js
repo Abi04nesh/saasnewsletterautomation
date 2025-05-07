@@ -24,10 +24,15 @@ export const useSubscribersCache = () => {
 
     try {
       const result = await subscribersAnalytics();
-      setData(result);
+      console.log('Analytics result:', result); // Debug log
+      if (!result?.last7Months) {
+        throw new Error('Invalid data format received');
+      }
+      setData(result.last7Months);
       lastFetchTime = Date.now();
-      return result;
+      return result.last7Months;
     } catch (err) {
+      console.error('Error fetching subscribers:', err); // Debug log
       setError(err.message || 'Failed to fetch subscriber data');
       return null;
     } finally {
@@ -37,11 +42,11 @@ export const useSubscribersCache = () => {
 
   // Format data for the chart
   const formattedData = useMemo(() => {
-    if (!data?.last7Months?.length) return [];
+    if (!data?.length) return [];
     
-    return data.last7Months.map(item => ({
-      month: item?.month,
-      count: item?.count,
+    return data.map(item => ({
+      month: item?.month || '',
+      count: item?.count || 0,
     }));
   }, [data]);
 
